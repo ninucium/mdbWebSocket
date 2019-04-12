@@ -1,0 +1,31 @@
+from pyModbusTCP.client import ModbusClient
+import time
+
+SERVER_HOST = "localhost"
+SERVER_PORT = 502
+
+c = ModbusClient()
+
+# uncomment this line to see debug message
+#c.debug(True)
+
+# define modbus server host, port
+c.host(SERVER_HOST)
+c.port(SERVER_PORT)
+
+while True:
+    # open or reconnect TCP to server
+    if not c.is_open():
+        if not c.open():
+            print("unable to connect to "+SERVER_HOST+":"+str(SERVER_PORT))
+
+    # if open() is ok, read register (modbus function 0x03)
+    if c.is_open():
+        # read 10 registers at address 0, store result in regs list
+        regs = c.read_holding_registers(0, 1)
+        for reg in regs:
+            # if success display registers
+            print("reg: "+ str(reg))
+
+    # sleep 2s before next polling
+    time.sleep(1)
